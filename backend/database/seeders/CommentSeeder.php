@@ -24,7 +24,7 @@ class CommentSeeder extends Seeder
 
         $faker = Faker::create();
         
-        $posts = BlogPost::inRandomOrder()->limit(10)->get(); // Limit to 10 posts for testing
+        $posts = BlogPost::orderByDesc('id')->limit(50)->get(); // Limit to 50 last posts for testing
         $users = User::all();
 
         if ($posts->isEmpty() || $users->isEmpty()) {

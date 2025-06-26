@@ -137,9 +137,7 @@ class BlogPostController extends Controller
     public function show(BlogPost $post)
     {
         // Check if user is authenticated and is the author
-        $user = auth()->user();
-        $isAuthor = $user && $user->id === $post->user_id;
-        
+        $isAuthor = auth()->id() === $post->user_id;
         // If not the author, only show published posts
         if (!$isAuthor && !$post->isPublished()) {
             abort(404, 'Post not found');

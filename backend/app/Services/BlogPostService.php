@@ -35,13 +35,11 @@ class BlogPostService
 
     public function getAuthorPosts(int $userId, int $perPage = 10): LengthAwarePaginator
     {
-        return Cache::tags('author_posts')->remember('author_posts.' . $userId . '.' . request('page', 1), 60, function () use ($userId, $perPage) {
-            return BlogPost::where('user_id', $userId)
-                          ->with('tags')
-                          ->withCount('comments')
-                          ->latest('created_at')
-                          ->paginate($perPage);
-        });
+        return BlogPost::where('user_id', $userId)
+                        ->with('tags')
+                        ->withCount('comments')
+                        ->latest('created_at')
+                        ->paginate($perPage);
     }
 
     public function createPost(array $data, $image = null): BlogPost
