@@ -64,9 +64,7 @@ class SearchService
     {
         if (empty($query)) {
             $page = request()->get('page', 1);
-            $start = microtime(true);
-            $result = BlogPost::published()->withCount('comments')->orderByDesc('created_at')->orderByDesc('id')->paginate($perPage);
-            $duration = round((microtime(true) - $start) * 1000, 2);
+            $result = BlogPost::published()->withCount('comments')->orderByDesc('created_at')->paginate($perPage);
             return $result;
         }
         $query = strtolower(trim($query));

@@ -83,10 +83,6 @@ class BlogPostService
             $post->tags()->sync($tagIds);
         }
 
-        Cache::tags('blog_posts')->flush();
-        $this->cacheService->invalidateBlogList();
-        Cache::forget('blog_post.' . $post->id);
-
         // Add post to search index if published
         if ($status === 'published') {
             try {
@@ -164,8 +160,6 @@ class BlogPostService
             $post->tags()->sync($tagIds);
         }
 
-        Cache::tags('blog_posts')->flush();
-        $this->cacheService->invalidateBlogList();
         Cache::forget('blog_post.' . $post->id);
 
         // Handle search indexing based on status changes
@@ -214,9 +208,7 @@ class BlogPostService
         }
         
         $post->delete();
-
-        Cache::tags('blog_posts')->flush();
-        $this->cacheService->invalidateBlogList();
+        
         Cache::forget('blog_post.' . $post->id);
     }
 }

@@ -4,6 +4,7 @@ import BlogPostDetailsPage from '../views/BlogPostDetailsPage.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import PostEditor from '../views/PostEditor.vue'
+import MyPostsPage from '../views/MyPostsPage.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -45,7 +46,7 @@ const router = createRouter({
     {
       path: '/my-posts',
       name: 'my-posts',
-      component: () => import('@/views/MyPostsPage.vue'),
+      component: MyPostsPage,
       meta: { requiresAuth: true }
     },
   ],

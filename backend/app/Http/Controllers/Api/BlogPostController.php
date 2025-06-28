@@ -140,7 +140,9 @@ class BlogPostController extends Controller
         $isAuthor = auth()->id() === $post->user_id;
         // If not the author, only show published posts
         if (!$isAuthor && !$post->isPublished()) {
-            abort(404, 'Post not found');
+             return response()->json([
+                'message' => 'Post not found or not accessible'
+            ], 404);
         }
         
         return new BlogPostResource($this->blogPostService->loadPostWithTags($post));

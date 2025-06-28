@@ -71,8 +71,14 @@ const authStore = useAuthStore();
 const showDeleteModal = ref(false);
 
 onMounted(async () => {
+  try {
     const response = await axios.get(`/posts/${route.params.id}`);
     post.value = response.data.data;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      router.push('/');
+    }
+  }
 });
 
 const handleDeleteClick = () => {
@@ -84,7 +90,7 @@ const confirmDelete = async () => {
         await axios.delete(`/posts/${post.value.id}`);
             router.push('/');
         } catch (error) {
-            console.error('Failed to delete post:', error);
+            //console.error('Failed to delete post:', error);
     } finally {
         showDeleteModal.value = false;
     }

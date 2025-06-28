@@ -84,7 +84,6 @@ const fetchPosts = async (reset = false) => {
             page.value++;
         }
     } catch (error) {
-        console.error('Error fetching posts:', error);
         // Show user-friendly error message
         if (error.response?.status === 500) {
             // This might be the first search after restart, show a helpful message
