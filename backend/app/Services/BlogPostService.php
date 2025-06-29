@@ -38,7 +38,7 @@ class BlogPostService
         return BlogPost::where('user_id', $userId)
                         ->with('tags')
                         ->withCount('comments')
-                        ->latest('created_at')
+                        ->latest('id')
                         ->paginate($perPage);
     }
 

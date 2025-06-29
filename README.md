@@ -1,6 +1,6 @@
 # Blog Application
 
-A modern, full-stack blog platform built with **Laravel 11** (backend) and **Vue 3 + Bootstrap 5** (frontend). Features include scheduled publishing with proper timezone handling, OTP-based authentication, Redis-powered search and caching, Markdown comments, infinite scroll, email notifications, and comprehensive debugging tools—all running in a Dockerized environment.
+A modern, full-stack blog platform built with **Laravel 8** (backend) and **Vue 3 + Bootstrap 5** (frontend). Features include scheduled publishing with proper timezone handling, OTP-based authentication, Redis-powered search and caching, Markdown comments, infinite scroll, email notifications, and comprehensive debugging tools—all running in a Dockerized environment.
 
 ---
 
