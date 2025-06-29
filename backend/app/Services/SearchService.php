@@ -60,34 +60,65 @@ class SearchService
         return $count;
     }
 
-    public function search(string $query = null, int $perPage = 10)
+   public function search(string $query = null, int $perPage = 10)
     {
         if (empty($query)) {
             $page = request()->get('page', 1);
-            $result = BlogPost::published()->withCount('comments')->orderByDesc('created_at')->paginate($perPage);
-            return $result;
+            return BlogPost::published()
+                ->withCount('comments')
+                ->orderByDesc('id')
+                ->paginate($perPage);
         }
+
         $query = strtolower(trim($query));
         $page = request()->get('page', 1);
+
+        // Step 1: Scan keys
+        $startScan = microtime(true);
         $keys = $this->scanKeys($this->keyPrefix . '*');
+        $endScan = microtime(true);
+        \Log::info('Redis scanKeys duration: ' . round($endScan - $startScan, 4) . ' seconds');
+
+        // Step 2: Pipelined fetch + filter
+        $startFetch = microtime(true);
         $postIds = [];
-        foreach ($keys as $key) {
-            $postData = Redis::hgetall($key);
+
+        // Pipelined hgetall calls
+        $allData = Redis::pipeline(function ($pipe) use ($keys) {
+            foreach ($keys as $key) {
+                $pipe->hgetall($key);
+            }
+        });
+
+        foreach ($allData as $index => $postData) {
             if (empty($postData)) continue;
-            $blob = strtolower(($postData['title'] ?? '') . ' ' . ($postData['description'] ?? '') . ' ' . ($postData['excerpt'] ?? '') . ' ' . ($postData['tags'] ?? ''));
+
+            $blob = strtolower(
+                ($postData['title'] ?? '') . ' ' .
+                ($postData['description'] ?? '') . ' ' .
+                ($postData['excerpt'] ?? '') . ' ' .
+                ($postData['tags'] ?? '')
+            );
+
             if (strpos($blob, $query) !== false) {
-                $postId = (int) str_replace($this->keyPrefix, '', $key);
+                $postId = (int) str_replace($this->keyPrefix, '', $keys[$index]);
                 $postIds[] = $postId;
             }
         }
+
+        $endFetch = microtime(true);
+        \Log::info('Redis fetch & filter duration (pipeline): ' . round($endFetch - $startFetch, 4) . ' seconds');
+
+        // Step 3: Paginate filtered results
         $total = count($postIds);
         $slicedIds = array_slice($postIds, ($page - 1) * $perPage, $perPage);
         $posts = BlogPost::published()
             ->whereIn('id', $slicedIds)
             ->with('tags')
             ->withCount('comments')
-            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->get();
+
         return new \Illuminate\Pagination\LengthAwarePaginator($posts, $total, $perPage, $page);
     }
 

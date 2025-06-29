@@ -38,7 +38,7 @@ class BlogPostSeeder extends Seeder
         }
         $tagIds = $tags->pluck('id');
 
-        $totalPosts = 200000;
+        $totalPosts = 20000;
         $chunkSize = 500;
 
         $this->command->info("Creating {$totalPosts} blog posts...");
