@@ -110,12 +110,6 @@ class BlogPostService
 
     public function updatePost(BlogPost $post, array $data, $image = null): BlogPost
     {
-         if (isset($data['image']) && $data['image'] !== $post->image) {
-            $this->imageService->delete($post->image);
-
-            $post->image = $data['image'] ?? null;
-        }
-
         if (isset($data['image']) && $data['image'] !== $post->image) {
             $this->imageService->delete($post->image);
             $post->image = $data['image'];
